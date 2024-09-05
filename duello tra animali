@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duello tra Animali</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        input { margin-bottom: 10px; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Duello tra Animali</h1>
+        <form id="animalForm">
+            <label for="animal1">Nome Animale 1:</label>
+            <input type="text" id="animal1" required>
+            <label for="animal2">Nome Animale 2:</label>
+            <input type="text" id="animal2" required>
+            <button type="button" onclick="calculateWinner()">Calcola Vincitore</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Dati predefiniti per gli animali, incluso l'essere umano
+        const animals = {
+            "balena": { lunghezza: 30, altezza: 12, velocita: 50, peso: 30000, forza: 16, aggressivita: "pacifico" },
+            "orca": { lunghezza: 8, altezza: 4, velocita: 60, peso: 6000, forza: 18, aggressivita: "aggressivo" },
+            "tigre": { lunghezza: 3, altezza: 1, velocita: 60, peso: 200, forza: 14, aggressivita: "aggressivo" },
+            "elefante": { lunghezza: 10, altezza: 4, velocita: 25, peso: 6000, forza: 20, aggressivita: "aggressivo" },
+            "essere umano": { lunghezza: 1.8, altezza: 0.5, velocita: 30, peso: 70, forza: 8, aggressivita: "neutro" }
+        };
+
+        function normalizeDimensions(length, height) {
+            const area = length * height;
+            const maxArea = 50;  // Dimensioni massime considerate
+            return Math.min((area / maxArea) * 10, 10);
+        }
+
+        function normalizeValue(value, maxValue) {
+            return Math.min((value / maxValue) * 10, 10);
+        }
+
+        function calculateScore(animal) {
+            const data = animals[animal.toLowerCase()];
+            if (!data) return 0;
+
+            const { lunghezza, altezza, velocita, peso, forza, aggressivita } = data;
+            const dimensionsNormalized = normalizeDimensions(lunghezza, altezza);
+            const velocityNormalized = normalizeValue(velocita, 100);
+            const weightNormalized = normalizeValue(peso, 10000);
+            const strengthNormalized = aggressivita === "pacifico" ? forza / 2 : forza;
+
+            return (0.3 * strengthNormalized + 0.25 * dimensionsNormalized + 0.2 * weightNormalized + 0.15 * velocityNormalized);
+        }
+
+        function calculateWinner() {
+            const animal1 = document.getElementById("animal1").value;
+            const animal2 = document.getElementById("animal2").value;
+
+            const score1 = calculateScore(animal1);
+            const score2 = calculateScore(animal2);
+
+            let result = `<h2>Risultati:</h2>`;
+            result += `<p>${animal1} ha un punteggio di: ${score1.toFixed(2)}</p>`;
+            result += `<p>${animal2} ha un punteggio di: ${score2.toFixed(2)}</p>`;
+
+            if (score1 > score2) {
+                result += `<p><strong>${animal1} vince!</strong></p>`;
+            } else if (score2 > score1) {
+                result += `<p><strong>${animal2} vince!</strong></p>`;
+            } else {
+                result += `<p><strong>È un pareggio!</strong></p>`;
+            }
+
+            document.getElementById("result").innerHTML = result;
+        }
+    </script>
+</body>
+</html>
